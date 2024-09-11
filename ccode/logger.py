@@ -33,7 +33,10 @@ class SelfDefFormatter(logging.Formatter):
         return s
     
 
-def config_logging():
+def config_logging(
+    console_level='INFO',
+    convert_newline=True,
+):
     # https://docs.python.org/3/library/logging.config.html#logging.config.dictConfig
     logging.config.dictConfig({
         'version': 1,
@@ -56,7 +59,7 @@ def config_logging():
                 'format': '%(asctime)s %(remote_addr)s %(url)s %(levelname)s %(name)s[%(lineno)d] %(message)s',
             },
             'selfreq2': {
-                '()': 'logger.SelfDefFormatter',
+                '()': 'logger.SelfDefFormatter' if convert_newline else 'logging.Formatter',
                 'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
                 # 可以自定义 asctime 格式
                 'datefmt': "%Y-%m-%d %H:%M:%S"
@@ -66,7 +69,7 @@ def config_logging():
             'console': {
                 'class': 'logging.StreamHandler',
                 'formatter': 'selfreq2',
-                'level': 'INFO',
+                'level': console_level,
             },
             'file': {
                 # https://docs.python.org/3/library/logging.handlers.html#timedrotatingfilehandler
